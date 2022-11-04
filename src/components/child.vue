@@ -1,39 +1,40 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, watchEffect } from "vue";
 
-const state = ref([]);
-
-const props = defineProps({
-  arr: {
-    type: Array,
-    required: true,
-  },
+const testState = ref({
+  notLogin: Number,
+  totalPerson: Number,
+  totalTicket: Number,
+  done: Number,
 });
-// console.log(state)
-// console.log(props)
-// console.log(props.arr)
+const props = defineProps({
+  obj: {
+    type: Object,
+    required: true
+  }
+});
 
-function getData() {
-  const data = props.arr;
-  // console.log(data)
-  data.forEach((item) => {
-    state.value.push({
-      "score": item.score,
-      "id": item.show.id,
-      "name": item.show.name
-    });
-  });
+function test() {
+  const data = props.obj.data;
+  console.log(data)
+
+  //把下列的註解掉就不會噴錯
+  const num = Array.from(
+    new Set(
+      data.map((item) => {
+        return item.id;
+      })
+    )
+  );
+  testState.value.totalPerson = num.length;
+  console.log(num.length); //78
 }
 
-getData();
+watchEffect(() => {
+  test();
+});
 </script>
 
 <template>
-  <div>
-    <ul v-for="states in state" :key="state.score">
-      <li>Name：{{states.name}}</li>
-      <li>ID：{{states.id}}</li>
-      <li>Score: {{states.score}}</li>
-    </ul>
-  </div>
+  <div>{{testState.totalPerson}}</div>
 </template>
